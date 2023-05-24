@@ -6,6 +6,7 @@ export default function App() {
   let [rpm, setRPM] = useState(0);
   let [temp, setTemp] = useState(0);
   let [peso, setPeso] = useState(0);
+  let [estado, setEstado] = useState("Encendido");
 
   const [number, onChangeNumber] = useState("");
   const [number1, onChangeNumber1] = useState("");
@@ -13,12 +14,13 @@ export default function App() {
   //Cada cierto tiempo se realiza un GET dek API REST
   const loadData = useCallback(async () => {
     try {
-      const response = await fetch("http://192.168.1.1:80/valores");
+      const response = await fetch("http://192.168.1.103:80/valores");
       const dataJSON = await response.json();
       console.log(dataJSON);
       setRPM(Math.round(dataJSON.rpm));
       setTemp(Math.round(dataJSON.temp * 10) / 10);
       setPeso(Math.round(dataJSON.peso * 100) / 100);
+      setEstado(dataJSON.estado);
     } catch (error) {
       console.log(error);
     }
@@ -42,6 +44,10 @@ export default function App() {
     return <Text style={styles.labelText}>Peso: {peso} g</Text>;
   };
 
+  const getEstado = () => {
+    return <Text style={styles.estiloEstadoTexto}>{estado}</Text>;
+  }
+
   //Text Input para RPM deseado
   const textRPM = () => {
     return (
@@ -58,7 +64,7 @@ export default function App() {
   //PUT para rpm deseado
   const putRPM = () => {
     console.log("PUT RPM deseado");
-    fetchWithTimeout("http://192.168.1.1:80/rpmDeseado", {
+    fetchWithTimeout("http://192.168.1.103:80/rpmDeseado", {
       method: "PUT",
       timeout: 1000,
       headers: { "Content-Type": "application/json" },
@@ -98,7 +104,7 @@ export default function App() {
   //PUT para peso deseado
   const putPeso = () => {
     console.log("PUT Peso deseado");
-    fetchWithTimeout("http://192.168.1.1:80/pesoDeseado", {
+    fetchWithTimeout("http://192.168.1.103:80/pesoDeseado", {
       method: "PUT",
       timeout: 1000,
       headers: { "Content-Type": "application/json" },
@@ -138,6 +144,9 @@ export default function App() {
         <View>
           {textPeso()}
           {buttonPeso()}
+        </View>
+        <View style={styles.estiloEstadoLabel}>
+          {getEstado()}
         </View>
       </View>
     </View>
@@ -191,6 +200,23 @@ const styles = StyleSheet.create({
 
   button: {
     fontSize: 40,
+  },
+
+  estiloEstadoTexto:{
+    fontSize: 40,
+    color: 'white',
+  },
+
+  estiloEstadoLabel:{
+    minWidth: '80%',
+    minHeight: '10%',
+    marginTop: '4%',
+    marginBottom: '1%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: 'blue',
+    borderRadius: 50,
   }
 
 });
