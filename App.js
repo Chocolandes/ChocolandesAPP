@@ -70,6 +70,7 @@ export default function App() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ rpm: number }),
     }).catch(function (err) {
+      setEstado("Error");
       console.log(err); // Prints "Error: something went terribly wrong"
     });
   };
@@ -110,6 +111,7 @@ export default function App() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ peso: number1 }),
     }).catch(function (err) {
+      setEstado("Error");
       console.log(err); // Prints "Error: something went terribly wrong"
     });
   };
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
 
 //Para el put pero si no se recibe respuesta se termina la transaccion
 async function fetchWithTimeout(resource, options = {}) {
-  const { timeout = 1000 } = options;
+  const { timeout = 8000 } = options;
 
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
