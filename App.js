@@ -2,53 +2,59 @@ import { useEffect, useState, useCallback } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 
 export default function App() {
-  //Variables donde se guarda los resutltados del api
-  let [rpm, setRPM] = useState(0);
-  let [temp, setTemp] = useState(0);
-  let [peso, setPeso] = useState(0);
-  let [estado, setEstado] = useState("Encendido");
+  //Variables donde se guarda los resutltados del api GET
+  let [rpm, setRPM] = useState(0); //RPM actuales
+  let [temp, setTemp] = useState(0); //Temperatura actual
+  let [peso, setPeso] = useState(0); //Peso actual
+  let [estado, setEstado] = useState("Encendido"); //Estado de funcionamiento
 
-  const [number, onChangeNumber] = useState("");
-  const [number1, onChangeNumber1] = useState("");
+  //Variables para guardar los inputs con informacion de RPM y Peso deseado
+  const [number, onChangeNumber] = useState(""); //RPM deseado
+  const [number1, onChangeNumber1] = useState(""); //Peso desado
 
-  //Cada cierto tiempo se realiza un GET dek API REST
+  //Cada cierto tiempo se realiza un GET del API REST
   const loadData = useCallback(async () => {
     try {
-      const response = await fetch("http://192.168.1.103:80/valores");
+      const response = await fetch("http://192.168.1.103:80/valores");//IP de la esp
       const dataJSON = await response.json();
       console.log(dataJSON);
-      setRPM(Math.round(dataJSON.rpm));
-      setTemp(Math.round(dataJSON.temp * 10) / 10);
-      setPeso(Math.round(dataJSON.peso * 100) / 100);
-      setEstado(dataJSON.estado);
+      setRPM(Math.round(dataJSON.rpm));//Asiganr valor de RPM a la variable de la app
+      setTemp(Math.round(dataJSON.temp * 10) / 10);//Asiganr valor de temperatura a la variable de la app
+      setPeso(Math.round(dataJSON.peso * 100) / 100); //Asiganr valor de peso a la variable de la app
+      setEstado(dataJSON.estado); //Asiganr valor de estado a la variable de la app
     } catch (error) {
-      console.log(error);
+      console.log(error);//Avisa de cualquier error
     }
   }, []);
 
-  //Configurar el useCallBack
+  //Configurar el useCallBack se realiza una llamada GET cada 1000ms
   useEffect(() => {
     const interval = setInterval(loadData, 1000);
     return () => clearInterval(interval);
   }, [loadData]);
 
+  //Imprimir el texto con RPM actual en la pantalla
   const getRPM = () => {
     return <Text style={styles.labelText}>RPM: {rpm} rpm</Text>;
   };
 
+  //Imprimir el texto con temperatura actual en la pantalla
   const getTemp = () => {
     return <Text style={styles.labelText}>Temp: {temp} °C</Text>;
   };
 
+
+  //Imprimir el texto con peso actual en la pantalla
   const getPeso = () => {
     return <Text style={styles.labelText}>Peso: {peso} g</Text>;
   };
 
+  //Imprimir el texto con el estado actual en la pantalla
   const getEstado = () => {
     return <Text style={styles.estiloEstadoTexto}>{estado}</Text>;
   }
 
-  //Text Input para RPM deseado
+  //Text Input para RPM deseado, maneja la caja de input del usuario
   const textRPM = () => {
     return (
       <TextInput
@@ -61,7 +67,7 @@ export default function App() {
     );
   };
 
-  //PUT para rpm deseado
+  //PUT para rpm deseado con el api REST
   const putRPM = () => {
     console.log("PUT RPM deseado");
     fetchWithTimeout("http://192.168.1.103:80/rpmDeseado", {
@@ -75,7 +81,7 @@ export default function App() {
     });
   };
 
-  //Boton para mandar PRM Deseado
+  //Boton para mandar PRM Desead
   const buttonRPM = () => {
     return (
       <Button
@@ -88,7 +94,7 @@ export default function App() {
     );
   };
 
-  //Text Input para peso deseado
+  //Text Input para peso deseado, maneja la caja de input del usuario
   const 
   textPeso = () => {
     return (
@@ -102,7 +108,7 @@ export default function App() {
     );
   };
 
-  //PUT para peso deseado
+  //PUT para peso deseado con el api REST
   const putPeso = () => {
     console.log("PUT Peso deseado");
     fetchWithTimeout("http://192.168.1.103:80/pesoDeseado", {
@@ -129,7 +135,7 @@ export default function App() {
     );
   };
 
-  //Estructura general de la pagina
+  //Estructura general de la pagina, MODIFICAR ESTO PARA ESTRUCTURA
   return (
     <View style={styles.fullApp}>
       <View>
@@ -155,7 +161,7 @@ export default function App() {
   );
 }
 
-//Poner estilos a los textos
+//Poner estilos a los textos, MODIFICAR ESTO PARA ESTILO
 const styles = StyleSheet.create({
   fullApp: {
     flex: 1,
